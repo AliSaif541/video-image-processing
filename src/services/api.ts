@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const apiBaseUrl = 'http://51.20.239.138:8000';
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 interface VideoResponse {
   class: string;
