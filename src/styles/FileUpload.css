@@ -60,6 +60,7 @@
     margin-bottom: 20px;
     display: grid;
     justify-items: start;
+    /* gap: 20px; */
   }
   
   .file-upload-h2 {
@@ -71,7 +72,10 @@
   
   .file-item {
     width: 99%;
-    min-height: 80px;
+    /* min-height: 80px; */
+    height: auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
     border: 1px solid #EDEDED;
     border-radius: 15px;
     display: grid;
