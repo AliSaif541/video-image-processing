@@ -2,44 +2,32 @@ import axios from 'axios';
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
-interface VideoResponse {
-  class: string;
-}
-
-interface ImageResponse {
-  prediction: number;
-}
-
 interface UploadResult {
-  fileClass: string;
+  fileUrl: string;
   timeTaken: number;
 }
 
 async function uploadImage(imageFile: File): Promise<UploadResult> {
   const formData = new FormData();
-  formData.append('image', imageFile);
+  console.log("img: ", imageFile)
+  formData.append('file', imageFile);
 
   const startTime = Date.now();
 
   try {
-    const response = await axios.post<ImageResponse>(`${apiBaseUrl}/upload_image`, formData, {
+    const response = await axios.post(`${apiBaseUrl}/process-image`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
+      responseType: 'blob',
     });
 
     const endTime = Date.now();
     const timeTaken = endTime - startTime;
 
-    let fileClass = "";
+    const fileUrl = URL.createObjectURL(response.data);
 
-    if (response.data.prediction === 0) {
-        fileClass = "coverage";
-    } else if (response.data.prediction === 1) {
-        fileClass = "storytelling";
-    }
-
-    return { fileClass, timeTaken };
+    return { fileUrl, timeTaken };
   } catch (error) {
     console.error('Error uploading image:', error);
     throw error;
@@ -48,26 +36,27 @@ async function uploadImage(imageFile: File): Promise<UploadResult> {
 
 async function uploadVideo(videoFile: File): Promise<UploadResult> {
   const formData = new FormData();
-  formData.append('video', videoFile);
+  formData.append('file', videoFile);
 
   const startTime = Date.now();
 
   try {
-    const response = await axios.post<VideoResponse>(`${apiBaseUrl}/upload_video`, formData, {
+    const response = await axios.post(`${apiBaseUrl}/process-video`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
+      responseType: 'blob',
     });
 
     const endTime = Date.now();
     const timeTaken = endTime - startTime;
+    const fileUrl = URL.createObjectURL(response.data);
 
-    return { fileClass: response.data.class, timeTaken };
+    return { fileUrl, timeTaken };
   } catch (error) {
     console.error('Error uploading video:', error);
     throw error;
   }
 }
 
-
-export { uploadImage, uploadVideo};
+export { uploadImage, uploadVideo };

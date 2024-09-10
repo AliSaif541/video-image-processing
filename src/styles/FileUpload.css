@@ -141,15 +141,16 @@
   }
 
   .response-text {
-    margin-left: 15px;
     margin-top: 15px;
     margin-bottom: 15px;
     display: grid;
-    grid-template-rows: 1fr 1fr;
-    font-weight: 400;
-    gap: 5px;
-    font-size: 14px;
-    line-height: 16.94px;
+  }
+
+  .processed-file {
+    border-radius: 12px;
+    justify-self: center;
+    width: 90%;
+    height: 400px;
   }
 
   .response-text p {
