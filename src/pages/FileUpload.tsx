@@ -42,18 +42,28 @@ const FileUpload: React.FC = () => {
 
   const handleDeleteFile = (index: number) => {
     const updatedFiles = files.filter((_, i) => i !== index);
+    const updatedResults = fileResults.filter((_, i) => i !== index);
+
+    const updatedPreviews = Object.keys(filePreviews)
+      .filter(key => parseInt(key) !== index)
+      .reduce((acc, key) => {
+        const numKey = parseInt(key, 10);
+        const newIndex = numKey > index ? numKey - 1 : numKey;
+        acc[newIndex] = filePreviews[numKey];
+        return acc;
+      }, {} as { [key: number]: string });
+
+    URL.revokeObjectURL(filePreviews[index]);
+
     setFiles(updatedFiles);
+    setFileResults(updatedResults); 
+    setFilePreviews(updatedPreviews); 
 
     if (toggledViewIndex === index) {
       setToggledViewIndex(null);
+    } else if (toggledViewIndex && toggledViewIndex > index) {
+      setToggledViewIndex(toggledViewIndex - 1);
     }
-
-    URL.revokeObjectURL(filePreviews[index]);
-    setFilePreviews(prevPreviews => {
-      const updatedPreviews = { ...prevPreviews };
-      delete updatedPreviews[index];
-      return updatedPreviews;
-    });
   };
 
   const handleProcessFiles = async () => {
@@ -115,6 +125,7 @@ const FileUpload: React.FC = () => {
     setProcessComplete(false);
     setError("");
     setToggledViewIndex(null);
+    setFileResults([]);
 
     Object.values(filePreviews).forEach(url => URL.revokeObjectURL(url));
     setFilePreviews({});
@@ -141,7 +152,7 @@ const FileUpload: React.FC = () => {
           multiple
           accept="image/*,video/*"
           onChange={handleFileChange}
-          disabled={isProcessing}
+          disabled={isProcessing || processComplete}
         />
         <label htmlFor="file-input" className="file-label">Browse</label>
       </div>
@@ -154,7 +165,7 @@ const FileUpload: React.FC = () => {
                 {file.type.startsWith('image/') ? (
                   <img src={filePreviews[index]} alt="file preview" className="file-icon" />
                 ) : (
-                  <video src={filePreviews[index]} className="file-icon" />
+                  <video src={filePreviews[index]} className="file-icon" controls />
                 )}
                 <div className="file-details">
                   <div className='file-description'>{file.name}</div>
@@ -180,7 +191,9 @@ const FileUpload: React.FC = () => {
                 {file.type.startsWith('image/') ? (
                   <img src={fileResults[index].fileUrl} alt="processed file" className="processed-file" />
                 ) : (
-                  <video src={fileResults[index].fileUrl} controls className="processed-file" />
+                  <video src={fileResults[index].fileUrl} controls className="processed-file">
+                    Your browser does not support the video tag.
+                  </video>
                 )}
               </div>
             )}
