@@ -55,7 +55,7 @@
   
   .file-list {
     width: 100%;
-    max-height: 300px;
+    max-height: 400px;
     overflow-y: auto;
     margin-bottom: 20px;
     display: grid;
@@ -73,7 +73,7 @@
   .file-item {
     width: 99%;
     /* min-height: 80px; */
-    height: auto;
+    max-height: auto;
     padding-top: 10px;
     padding-bottom: 10px;
     border: 1px solid #EDEDED;

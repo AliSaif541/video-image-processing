@@ -36,6 +36,7 @@ async function uploadImage(imageFile: File): Promise<UploadResult> {
 async function uploadVideo(videoFile: File): Promise<UploadResult> {
   const formData = new FormData();
   formData.append('file', videoFile);
+
   const startTime = Date.now();
 
   try {
@@ -43,18 +44,20 @@ async function uploadVideo(videoFile: File): Promise<UploadResult> {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
-      responseType: 'arraybuffer', 
     });
+
     const endTime = Date.now();
     const timeTaken = endTime - startTime;
 
-    const blob = new Blob([response.data], { type: 'video/mp4' });
-    const fileUrl = URL.createObjectURL(blob);
-    return { fileUrl, timeTaken };
+    const videoLink = response.data.url; 
+    console.log("Video Link: ", videoLink);
+
+    return { fileUrl: videoLink, timeTaken };
   } catch (error) {
     console.error('Error uploading video:', error);
     throw error;
   }
 }
+
 
 export { uploadImage, uploadVideo };
